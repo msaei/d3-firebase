@@ -20,27 +20,39 @@ const xAxisGroup = graph.append('g')
 
 const yAxisGroup = graph.append('g');
 
-db.collection('dishes').get().then(res => {
-    var data = [];
-    res.docs.forEach(doc => {
-        data.push(doc.data())
-    })
+// scales
+const y = d3.scaleLinear()
+    .range([graphHeight, 0]);
 
-    const y = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.orders)])
-        .range([graphHeight, 0]);
+const x = d3.scaleBand()
+    .range([0, graphWidth])
+    .paddingInner(0.2)
+    .paddingOuter(0.2);
 
-    const x = d3.scaleBand()
-        .domain(data.map(item => item.name))
-        .range([0, graphWidth])
-        .paddingInner(0.2)
-        .paddingOuter(0.2);
+// create & call axes
+const xAxis = d3.axisBottom(x);
+const yAxis = d3.axisLeft(y)
+    .ticks(5)
+    .tickFormat(d => d + ' orders');
 
-    // join the data to circs
+xAxisGroup.selectAll('text')
+    .attr('transform', 'rotate(-40)')
+    .attr('text-anchor', 'end');
+
+// update function
+const update = (data) => {
+    // update scale domain
+    y.domain([0, d3.max(data, d => d.orders)])
+    x.domain(data.map(item => item.name))
+
+    // join the data to rects
     const rects = graph.selectAll('rect')
         .data(data);
 
-    // add attrs to circs already in the DOM
+    // remove exit selection
+    rects.exit().remove();
+
+    // add attrs to rects already in the DOM
     rects.attr('width', x.bandwidth)
         .attr("height", d => graphHeight - y(d.orders))
         .attr('fill', 'orange')
@@ -56,17 +68,18 @@ db.collection('dishes').get().then(res => {
         .attr('x', (d) => x(d.name))
         .attr('y', d => y(d.orders));
 
-    // create & call axes
-    const xAxis = d3.axisBottom(x);
-    const yAxis = d3.axisLeft(y)
-        .ticks(5)
-        .tickFormat(d => d + ' orders');
-
+    // call axiis
     xAxisGroup.call(xAxis);
     yAxisGroup.call(yAxis);
 
-    xAxisGroup.selectAll('text')
-        .attr('transform', 'rotate(-40)')
-        .attr('text-anchor', 'end');
+}
+
+db.collection('dishes').get().then(res => {
+    var data = [];
+    res.docs.forEach(doc => {
+        data.push(doc.data())
+    })
+
+    update(data);
 
 });
