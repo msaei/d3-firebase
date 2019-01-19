@@ -63,10 +63,13 @@ const update = (data) => {
     rects.enter()
         .append('rect')
         .attr('width', x.bandwidth)
-        .attr("height", d => graphHeight - y(d.orders))
+        .attr("height", 0)
         .attr('fill', 'orange')
         .attr('x', (d) => x(d.name))
-        .attr('y', d => y(d.orders));
+        .attr('y', d => graphHeight)
+        .transition().duration(500)
+        .attr("height", d => graphHeight - y(d.orders))
+        .attr("y", d => y(d.orders))
 
     // call axiis
     xAxisGroup.call(xAxis);
