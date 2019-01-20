@@ -66,7 +66,6 @@ const update = (data) => {
     // append the enter selection to the DOM
     rects.enter()
         .append('rect')
-        .attr('width', x.bandwidth)
         .attr("height", 0)
         .attr('fill', 'orange')
         .attr('x', (d) => x(d.name))
