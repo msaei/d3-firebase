@@ -72,6 +72,7 @@ const update = (data) => {
         .attr('x', (d) => x(d.name))
         .attr('y', d => graphHeight)
         .transition(t)
+        .attrTween('width', widthTween)
         .attr("height", d => graphHeight - y(d.orders))
         .attr("y", d => y(d.orders))
 
@@ -109,3 +110,11 @@ db.collection('dishes').onSnapshot(res => {
     update(data);
 
 });
+
+// Tweens
+const widthTween = (d) => {
+    let i = d3.interpolate(0, x.bandwidth());
+    return function(t) {
+        return i(t);
+    }
+}
