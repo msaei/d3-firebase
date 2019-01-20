@@ -39,6 +39,9 @@ xAxisGroup.selectAll('text')
     .attr('transform', 'rotate(-40)')
     .attr('text-anchor', 'end');
 
+// define t for transition duration
+const t = d3.transition().duration(1000);
+
 // update function
 const update = (data) => {
     // update scale domain
@@ -56,7 +59,7 @@ const update = (data) => {
     rects.attr('width', x.bandwidth)
         .attr('fill', 'orange')
         .attr('x', d => x(d.name))
-        .transition().duration(500)
+        .transition(t)
         .attr('y', d => y(d.orders))
         .attr("height", d => graphHeight - y(d.orders))
 
@@ -68,7 +71,7 @@ const update = (data) => {
         .attr('fill', 'orange')
         .attr('x', (d) => x(d.name))
         .attr('y', d => graphHeight)
-        .transition().duration(500)
+        .transition(t)
         .attr("height", d => graphHeight - y(d.orders))
         .attr("y", d => y(d.orders))
 
